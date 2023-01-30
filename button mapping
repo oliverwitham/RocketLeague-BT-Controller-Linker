@@ -1,0 +1,23 @@
+Top-left joystick:
+vertical: axis 1/2
+horizontal: axis 0
+
+Bottom-right joystick:
+vertical: axis 4/5
+horizontal: axis 3
+
+A: btn 0
+X: btn 3
+Y: btn 4
+B: btn 1
+
+Left bumper: btn 6
+Left trigger: btn 8
+
+Right bumper: btn 7
+Right trigger: btn 9
+
+Select: btn 10
+Start: btn 11
+
+Bottom-left arrows: Hat 0

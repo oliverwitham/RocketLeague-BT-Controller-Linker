@@ -3,3 +3,15 @@ https://pypi.org/project/vgamepad/
 
 Reading Bluetooth joystick:
 https://pypi.org/project/pyjoystick/
+
+Queue:
+https://www.geeksforgeeks.org/queue-in-python/
+
+Threading:
+https://realpython.com/intro-to-python-threading/#working-with-many-threads
+
+Killing a thread:
+https://www.geeksforgeeks.org/python-different-ways-to-kill-a-thread/
+
+Daemons and program ending:
+https://stackoverflow.com/questions/52439021/why-is-python3-daemon-thread-instantly-closing-in-console
