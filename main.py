@@ -9,14 +9,37 @@ vcontroller = vg.VX360Gamepad()
 
 commands = Queue(maxsize = 1000)
 
+# unclear about 10 mapping (should be Select)
+button_map = {
+    0: vg.XUSB_BUTTON.XUSB_GAMEPAD_A,
+    1: vg.XUSB_BUTTON.XUSB_GAMEPAD_B,
+    3: vg.XUSB_BUTTON.XUSB_GAMEPAD_X,
+    4: vg.XUSB_BUTTON.XUSB_GAMEPAD_Y,
+    6: vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER,
+    7: vg.XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_SHOULDER,
+    8: vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_THUMB,
+    9: vg.XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_THUMB,
+    10: vg.XUSB_BUTTON.XUSB_GAMEPAD_GUIDE,
+    11: vg.XUSB_BUTTON.XUSB_GAMEPAD_START,
+}
+
 def process_data():
-    print("processing")
     command = commands.get()
-    print(command)
+    match command.keytype:
+        case "Button":
+            if command.raw_value == 1:
+                vcontroller.press_button(button = button_map[command.number])
+            else:
+                vcontroller.release_button(button = button_map[command.number])
+        case "Axis":
+            print("axis")
+        case "Hat":
+            print("hat")
+        case _:
+            print("invalid keytype received")
 
 def update_controller_data():
-    print("updating controller data")
-    # vcontroller.
+    pass
 
 def joy_add(joy):
     print('Added', joy)
@@ -27,8 +50,8 @@ def joy_remove(joy):
     print('Removed', joy)
 
 def joy_key_received(key):
-    print('Key:', key)
-    commands.put(key)
+    if key.joystick == "6 axis 15 button gamepad with hat switch":
+        commands.put(key)
 
 def begin_joy_handling():
     run_event_loop(joy_add, joy_remove, joy_key_received)
@@ -37,7 +60,7 @@ def handle_joy_inputs():
     while(1):
         if (not commands.empty()):
             process_data()
-            update_controller_data()
+            # update_controller_data()
             vcontroller.update()
 
 # Threads must be daemons so they exit when the main program ends, otherwise the python program won't end

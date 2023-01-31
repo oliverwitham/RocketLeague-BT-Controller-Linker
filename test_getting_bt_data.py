@@ -11,6 +11,10 @@ def print_remove(joy):
     print('Removed', joy)
 
 def key_received(key):
-    print('Key:', key.keytype)
+    print('Key type: ', key.keytype)
+    print('Key number: ', key.number)
+    print('Key raw val: ', key.raw_value)
+    print('Key number: ', key.number)
+
 
 run_event_loop(print_add, print_remove, key_received)
