@@ -23,6 +23,13 @@ button_map = {
     11: vg.XUSB_BUTTON.XUSB_GAMEPAD_START,
 }
 
+hat_map = {
+    1: vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_UP,
+    2: vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_RIGHT,
+    4: vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_DOWN,
+    8: vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_LEFT
+}
+
 def process_data():
     command = commands.get()
     match command.keytype:
@@ -35,6 +42,13 @@ def process_data():
             print("axis")
         case "Hat":
             print("hat")
+            if command.number == 0:
+                for i in range(0, 4):
+                    vcontroller.release_button(button = hat_map[4])
+            elif command.number == 4:
+                vcontroller.press_button(button = hat_map[4])
+            else:
+                pass
         case _:
             print("invalid keytype received")
 
