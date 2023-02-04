@@ -30,6 +30,35 @@ hat_map = {
     8: vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_LEFT
 }
 
+class JoyFloats:
+    x_val: float
+    y_val: float
+    def __init__(self, x, y):
+        self.x_val = float(x)
+        self.y_val = float(y)
+
+left_joy = JoyFloats(0, 0)
+right_joy = JoyFloats(0, 0)
+
+def updateJoys(command):
+    match command.number:
+        case 0:
+            left_joy.x_val = command.raw_value
+            return "left"
+        case 1:
+            left_joy.y_val = command.raw_value*-1
+            return "left"
+        case 2:
+            pass
+        case 3:
+            right_joy.x_val = command.raw_value
+            return "right"
+        case 4:
+            right_joy.y_val = command.raw_value
+            return "right"
+        case 5:
+            pass
+
 def process_data():
     command = commands.get()
     match command.keytype:
@@ -39,7 +68,11 @@ def process_data():
             else:
                 vcontroller.release_button(button = button_map[command.number])
         case "Axis":
-            print("axis")
+            dir = updateJoys(command)
+            if (dir == "left"):
+                vcontroller.left_joystick_float(x_value_float=left_joy.x_val, y_value_float= left_joy.y_val)
+            else:
+                vcontroller.right_joystick_float(x_value_float=right_joy.x_val, y_value_float=right_joy.y_val)
         case "Hat":
             print("hat")
             if command.number == 0:
@@ -66,16 +99,20 @@ def joy_remove(joy):
 def joy_key_received(key):
     if key.joystick == "6 axis 15 button gamepad with hat switch":
         commands.put(key)
+        process_data()
+        # update_controller_data()
+        vcontroller.update()
 
 def begin_joy_handling():
     run_event_loop(joy_add, joy_remove, joy_key_received)
 
 def handle_joy_inputs():
-    while(1):
-        if (not commands.empty()):
-            process_data()
-            # update_controller_data()
-            vcontroller.update()
+    pass
+    # while(1):
+    #     if (not commands.empty()):
+    #         process_data()
+    #         # update_controller_data()
+    #         vcontroller.update()
 
 # Threads must be daemons so they exit when the main program ends, otherwise the python program won't end
 joy_input_thread = threading.Thread(target=begin_joy_handling, args=(), daemon=True)
