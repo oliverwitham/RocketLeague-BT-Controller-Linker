@@ -85,9 +85,6 @@ def process_data():
         case _:
             print("invalid keytype received")
 
-def update_controller_data():
-    pass
-
 def joy_add(joy):
     print('Added', joy)
     print(joy.identifier)
@@ -100,25 +97,13 @@ def joy_key_received(key):
     if key.joystick == "6 axis 15 button gamepad with hat switch":
         commands.put(key)
         process_data()
-        # update_controller_data()
         vcontroller.update()
 
 def begin_joy_handling():
     run_event_loop(joy_add, joy_remove, joy_key_received)
 
-def handle_joy_inputs():
-    pass
-    # while(1):
-    #     if (not commands.empty()):
-    #         process_data()
-    #         # update_controller_data()
-    #         vcontroller.update()
-
-# Threads must be daemons so they exit when the main program ends, otherwise the python program won't end
+# Thread must be a daemon so it exits when the main program ends, otherwise the python program won't end
 joy_input_thread = threading.Thread(target=begin_joy_handling, args=(), daemon=True)
-vjoy_handling_thread = threading.Thread(target=handle_joy_inputs, args=(), daemon=True)
-
-vjoy_handling_thread.start()
 joy_input_thread.start()
 
 inp = input()
