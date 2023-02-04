@@ -23,11 +23,23 @@ button_map = {
     11: vg.XUSB_BUTTON.XUSB_GAMEPAD_START,
 }
 
+hat_dirs = {
+    "up": vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_UP,
+    "right": vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_RIGHT,
+    "down": vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_DOWN,
+    "left": vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_LEFT,
+}
+
 hat_map = {
-    1: vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_UP,
-    2: vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_RIGHT,
-    4: vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_DOWN,
-    8: vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_LEFT
+    0: [],
+    1: [hat_dirs["up"]],
+    2: [hat_dirs["right"]],
+    3: [hat_dirs["up"], hat_dirs["right"]],
+    4: [hat_dirs["down"]],
+    6: [hat_dirs["down"], hat_dirs["right"]],
+    8: [hat_dirs["left"]],
+    9: [hat_dirs["up"], hat_dirs["left"]],
+    12: [hat_dirs["down"], hat_dirs["left"]],
 }
 
 class JoyFloats:
@@ -59,6 +71,19 @@ def updateJoys(command):
         case 5:
             pass
 
+def hat_handler(command):
+    # Release all D-pad buttons
+    vcontroller.release_button(button = hat_dirs["up"])
+    vcontroller.release_button(button = hat_dirs["right"])
+    vcontroller.release_button(button = hat_dirs["down"])
+    vcontroller.release_button(button = hat_dirs["left"])
+
+    # Press all buttons for given hat direction
+    print("command num: ", command.raw_value),
+    print("hat_map: ", hat_map[command.raw_value])
+    for btn in hat_map[command.raw_value]:
+        vcontroller.press_button(button = btn)
+
 def process_data():
     command = commands.get()
     match command.keytype:
@@ -74,14 +99,7 @@ def process_data():
             else:
                 vcontroller.right_joystick_float(x_value_float=right_joy.x_val, y_value_float=right_joy.y_val)
         case "Hat":
-            print("hat")
-            if command.number == 0:
-                for i in range(0, 4):
-                    vcontroller.release_button(button = hat_map[4])
-            elif command.number == 4:
-                vcontroller.press_button(button = hat_map[4])
-            else:
-                pass
+            hat_handler(command)
         case _:
             print("invalid keytype received")
 
