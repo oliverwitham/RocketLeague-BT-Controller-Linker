@@ -79,19 +79,43 @@ def hat_handler(command):
     vcontroller.release_button(button = hat_dirs["left"])
 
     # Press all buttons for given hat direction
-    print("command num: ", command.raw_value),
-    print("hat_map: ", hat_map[command.raw_value])
     for btn in hat_map[command.raw_value]:
         vcontroller.press_button(button = btn)
+
+def release_all_buttons():
+    for key in button_map:
+        vcontroller.release_button(button = button_map[key])
+    for key in hat_dirs:
+        vcontroller.release_button(button = hat_dirs[key])
+
+def recenter_all_joysticks():
+    left_joy.x_val = 0
+    left_joy.y_val = 0
+    right_joy.x_val = 0
+    right_joy.y_val = 0
+    vcontroller.left_joystick_float(x_value_float=left_joy.x_val, y_value_float= left_joy.y_val)
+    vcontroller.left_joystick_float(x_value_float=right_joy.x_val, y_value_float= right_joy.y_val)
 
 def process_data():
     command = commands.get()
     match command.keytype:
         case "Button":
             if command.raw_value == 1:
-                vcontroller.press_button(button = button_map[command.number])
+                if command.number != 8 and command.number != 9:
+                    vcontroller.press_button(button = button_map[command.number])
+                else:
+                    if command.number == 8:
+                        vcontroller.left_trigger_float(1.0)
+                    else:
+                        vcontroller.right_trigger_float(1.0)
             else:
-                vcontroller.release_button(button = button_map[command.number])
+                if command.number != 8 and command.number != 9:
+                    vcontroller.release_button(button = button_map[command.number])
+                else:
+                    if command.number == 8:
+                        vcontroller.left_trigger_float(0.0)
+                    else:
+                        vcontroller.right_trigger_float(0.0)
         case "Axis":
             dir = updateJoys(command)
             if (dir == "left"):
@@ -114,8 +138,18 @@ def joy_remove(joy):
 def joy_key_received(key):
     if key.joystick == "6 axis 15 button gamepad with hat switch":
         commands.put(key)
-        process_data()
-        vcontroller.update()
+        try:
+            process_data()
+            vcontroller.update()
+        except:
+            print("Error received")
+            # # release_all_buttons()
+            # # recenter_all_joysticks()
+            # # Clear all remaining keys, in case there are any
+            # while (commands.not_empty):
+            #     commands.get()
+            # # vcontroller.update()
+            # print("Controller reset to defaults")
 
 def begin_joy_handling():
     run_event_loop(joy_add, joy_remove, joy_key_received)
