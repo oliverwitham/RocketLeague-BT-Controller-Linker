@@ -142,6 +142,7 @@ def joy_key_received(key):
             process_data()
             vcontroller.update()
         except:
+            # This code to be updated
             print("Error received")
             # # release_all_buttons()
             # # recenter_all_joysticks()
